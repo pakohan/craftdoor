@@ -102,7 +102,7 @@ func (r *Reader) runloop() {
 		data, err := r.rfid.ReadCard(10*time.Second, commands.PICC_AUTHENT1B, 0, 0, mfrc522.DefaultKey)
 		if err != nil {
 			if err.Error() == "mfrc522 lowlevel: IRQ error" {
-				err = r.rfid.Reset()
+				err = r.rfid.LowLevel.Reset()
 				if err != nil {
 					log.Println("err initializing pin after error")
 				}
