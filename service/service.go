@@ -32,7 +32,7 @@ func New(cfg config.Config, m model.Model) *Service {
 
 func (s *Service) WaitForChange(id uuid.UUID) State {
 	s.lock.Lock()
-	if s.currentState.ID == id {
+	if s.currentState.ID != id {
 		res := s.currentState
 		s.lock.Unlock()
 		return res
