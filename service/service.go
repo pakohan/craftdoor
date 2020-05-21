@@ -5,7 +5,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/pakohan/craftdoor/config"
-	"github.com/pakohan/craftdoor/lib"
 	"github.com/pakohan/craftdoor/model"
 )
 
@@ -22,15 +21,12 @@ type State struct {
 	s string
 }
 
-func New(cfg config.Config, m model.Model) (*Service, error) {
-	s := &Service{
+func New(cfg config.Config, m model.Model) *Service {
+	return &Service{
 		m:         m,
 		lock:      &sync.Mutex{},
 		listeners: map[uuid.UUID]chan<- State{},
 	}
-
-	_, err := lib.NewReader(cfg, s)
-	return s, err
 }
 
 func (s *Service) WaitForChange(id uuid.UUID) State {
