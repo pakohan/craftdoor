@@ -38,6 +38,8 @@ func (c *controller) returnState(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Println(c.s)
+
 	state := c.s.WaitForChange(id)
 
 	err = json.NewEncoder(w).Encode(state)

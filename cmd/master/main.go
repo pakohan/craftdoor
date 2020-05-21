@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/pakohan/craftdoor/config"
@@ -35,6 +36,8 @@ func start(cfg config.Config, db *sqlx.DB) error {
 	m := model.New(db)
 	s := service.New(cfg, m)
 	c := controller.New(m, s)
+
+	s.WaitForChange(uuid.Nil)
 
 	_, err := lib.NewReader(cfg, s)
 	if err != nil {
