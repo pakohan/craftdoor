@@ -8,6 +8,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/pakohan/craftdoor/config"
 	"github.com/pakohan/craftdoor/controller"
+	"github.com/pakohan/craftdoor/lib"
 	"github.com/pakohan/craftdoor/model"
 	"github.com/pakohan/craftdoor/service"
 )
