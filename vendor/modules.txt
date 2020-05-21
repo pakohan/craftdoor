@@ -8,6 +8,9 @@ github.com/gorilla/mux
 ## explicit
 github.com/jmoiron/sqlx
 github.com/jmoiron/sqlx/reflectx
+# github.com/mattn/go-sqlite3 v1.9.0
+## explicit
+github.com/mattn/go-sqlite3
 # periph.io/x/periph v3.6.2+incompatible
 ## explicit
 periph.io/x/periph
