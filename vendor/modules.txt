@@ -1,0 +1,43 @@
+# github.com/google/uuid v1.1.1
+## explicit
+github.com/google/uuid
+# github.com/gorilla/mux v1.7.4
+## explicit
+github.com/gorilla/mux
+# github.com/jmoiron/sqlx v1.2.0
+## explicit
+github.com/jmoiron/sqlx
+github.com/jmoiron/sqlx/reflectx
+# periph.io/x/periph v3.6.2+incompatible
+## explicit
+periph.io/x/periph
+periph.io/x/periph/conn
+periph.io/x/periph/conn/gpio
+periph.io/x/periph/conn/gpio/gpioreg
+periph.io/x/periph/conn/gpio/gpiostream
+periph.io/x/periph/conn/i2c
+periph.io/x/periph/conn/i2c/i2creg
+periph.io/x/periph/conn/physic
+periph.io/x/periph/conn/pin
+periph.io/x/periph/conn/pin/pinreg
+periph.io/x/periph/conn/spi
+periph.io/x/periph/conn/spi/spireg
+periph.io/x/periph/experimental/devices/mfrc522
+periph.io/x/periph/experimental/devices/mfrc522/commands
+periph.io/x/periph/host
+periph.io/x/periph/host/allwinner
+periph.io/x/periph/host/am335x
+periph.io/x/periph/host/bcm283x
+periph.io/x/periph/host/beagle/black
+periph.io/x/periph/host/beagle/bone
+periph.io/x/periph/host/beagle/green
+periph.io/x/periph/host/chip
+periph.io/x/periph/host/cpu
+periph.io/x/periph/host/distro
+periph.io/x/periph/host/fs
+periph.io/x/periph/host/odroidc1
+periph.io/x/periph/host/pine64
+periph.io/x/periph/host/pmem
+periph.io/x/periph/host/rpi
+periph.io/x/periph/host/sysfs
+periph.io/x/periph/host/videocore
