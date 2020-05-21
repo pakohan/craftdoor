@@ -99,7 +99,11 @@ func (r *Reader) initReader() error {
 func (r *Reader) runloop() {
 	var old string
 	for range time.Tick(1 * time.Second) {
-		data, err := r.rfid.ReadCard(time.Second, commands.PICC_AUTHENT1B, 0, 0, mfrc522.DefaultKey)
+		timeout := 10 * time.Second
+		if old != "" {
+			timeout = 0
+		}
+		data, err := r.rfid.ReadCard(timeout, commands.PICC_AUTHENT1B, 0, 0, mfrc522.DefaultKey)
 		if err != nil {
 			if err.Error() == "mfrc522 lowlevel: IRQ error" {
 				err = r.initReader()
