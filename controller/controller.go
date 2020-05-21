@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/pakohan/craftdoor/model"
 	"github.com/pakohan/craftdoor/service"
@@ -24,7 +25,7 @@ func New(m model.Model, s *service.Service) http.Handler {
 	c := &controller{
 		m:       m,
 		s:       s,
-		Handler: r,
+		Handler: handlers.CORS()(r),
 	}
 	r.Methods(http.MethodGet).Path("/state").HandlerFunc(c.returnState)
 	return c
