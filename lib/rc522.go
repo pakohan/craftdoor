@@ -106,7 +106,7 @@ func (r *Reader) runloop() {
 				if err != nil {
 					log.Printf("err initializing pin after error: %s", err)
 				}
-			} else if strings.HasPrefix(err.Error(), "timeout waiting for IRQ edge: ") {
+			} else if strings.HasPrefix(err.Error(), "mfrc522 lowlevel: timeout waiting for IRQ edge: ") {
 				old = ""
 				r.s.Notify(old)
 				log.Printf("state changed to '%s'", old)
