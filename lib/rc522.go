@@ -53,7 +53,12 @@ func NewReader(cfg config.Config, s Subscriber) (*Reader, error) {
 		lock:       &sync.Mutex{},
 	}
 
-	return r, r.initReader()
+	err = r.initReader()
+	if err != nil {
+		return nil, err
+	}
+	go r.runloop()
+	return r, nil
 }
 
 func (r *Reader) initReader() error {
