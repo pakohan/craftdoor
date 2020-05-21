@@ -1,6 +1,7 @@
 package service
 
 import (
+	"log"
 	"sync"
 
 	"github.com/google/uuid"
@@ -54,6 +55,8 @@ func (s *Service) WaitForChange(id uuid.UUID) State {
 func (s *Service) Notify(state string) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
+
+	log.Printf("state changed to '%s'", state)
 
 	s.current = uuid.New()
 	s.currentState.s = state

@@ -59,6 +59,7 @@ func NewReader(cfg config.Config, s Subscriber) (*Reader, error) {
 		return nil, err
 	}
 	go r.runloop()
+	log.Printf("initialized reader")
 	return r, nil
 }
 
@@ -92,7 +93,6 @@ func (r *Reader) initReader() error {
 	}
 
 	r.rfid.SetAntennaGain(5)
-	log.Printf("initialized reader")
 	return nil
 }
 
@@ -107,16 +107,16 @@ func (r *Reader) runloop() {
 					log.Printf("err initializing pin after error: %s", err)
 				}
 			} else if strings.HasPrefix(err.Error(), "mfrc522 lowlevel: timeout waiting for IRQ edge: ") {
-				old = ""
-				r.s.Notify(old)
-				log.Printf("state changed to '%s'", old)
+				if old != "" {
+					old = ""
+					r.s.Notify(old)
+				}
 			} else {
 				log.Printf("err from ReadCard: %s", err)
 			}
 		} else if old != string(data) {
 			old = string(data)
 			r.s.Notify(old)
-			log.Printf("state changed to '%s'", old)
 		}
 	}
 }
