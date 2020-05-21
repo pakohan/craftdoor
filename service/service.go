@@ -31,6 +31,8 @@ func New(cfg config.Config, m model.Model) *Service {
 }
 
 func (s *Service) WaitForChange(id uuid.UUID) State {
+	log.Println(s)
+	log.Println(s.lock)
 	s.lock.Lock()
 	if s.currentState.ID == id {
 		res := s.currentState
