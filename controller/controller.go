@@ -20,15 +20,14 @@ type controller struct {
 
 // New returns a new http.Handler
 func New(m model.Model, s *service.Service) http.Handler {
-	c := &controller{}
 	r := mux.NewRouter()
-	r.Methods(http.MethodGet).Path("/state").HandlerFunc(c.returnState)
-
-	return &controller{
+	c := &controller{
 		m:       m,
 		s:       s,
 		Handler: r,
 	}
+	r.Methods(http.MethodGet).Path("/state").HandlerFunc(c.returnState)
+	return c
 }
 
 func (c *controller) returnState(w http.ResponseWriter, r *http.Request) {
