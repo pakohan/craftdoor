@@ -15,6 +15,8 @@ import (
 )
 
 func main() {
+	log.SetFlags(log.Llongfile)
+
 	cfg, err := config.ReadConfig()
 	if err != nil {
 		log.Panic(err)
