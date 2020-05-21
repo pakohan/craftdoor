@@ -86,6 +86,7 @@ func (r *Reader) initReader() error {
 	}
 
 	r.rfid.SetAntennaGain(5)
+	log.Printf("initialized reader")
 	return nil
 }
 
@@ -103,8 +104,9 @@ func (r *Reader) runloop() {
 				log.Printf("err from ReadCard: %s", err)
 			}
 		} else if old != string(data) {
-			r.s.Notify(string(data))
 			old = string(data)
+			r.s.Notify(old)
+			log.Printf("state changed to '%s'", old)
 		}
 	}
 }
