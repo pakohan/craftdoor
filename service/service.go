@@ -12,14 +12,14 @@ import (
 type Service struct {
 	m model.Model
 
-	current      uuid.UUID
 	lock         *sync.Mutex
 	listeners    map[uuid.UUID]chan<- State
 	currentState State
 }
 
 type State struct {
-	s string
+	S  string
+	ID uuid.UUID
 }
 
 func New(cfg config.Config, m model.Model) *Service {
@@ -32,7 +32,7 @@ func New(cfg config.Config, m model.Model) *Service {
 
 func (s *Service) WaitForChange(id uuid.UUID) State {
 	s.lock.Lock()
-	if s.current == id {
+	if s.currentState.ID == id {
 		res := s.currentState
 		s.lock.Unlock()
 		return res
@@ -58,8 +58,8 @@ func (s *Service) Notify(state string) {
 
 	log.Printf("state changed to '%s'", state)
 
-	s.current = uuid.New()
-	s.currentState.s = state
+	s.currentState.S = state
+	s.currentState.ID = uuid.New()
 	for _, l := range s.listeners {
 		l <- s.currentState
 		close(l)
