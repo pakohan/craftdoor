@@ -28,5 +28,5 @@ func (s *Service) WaitForChange(ctx context.Context, id uuid.UUID) (lib.State, e
 }
 
 func (s *Service) InitKey(ctx context.Context) error {
-	return s.r.InitKey([16]byte{1, 2, 3}, [16]byte{4, 5, 6}, mfrc522.DefaultKey, mfrc522.Key{1, 2, 3, 4, 5, 6}, mfrc522.Key{6, 5, 4, 3, 2, 1})
+	return s.r.InitKey([16]byte{1, 2, 3}, [16]byte{4, 5, 6}, mfrc522.Key{1, 2, 3, 4, 5, 6}, mfrc522.Key{1, 2, 3, 4, 5, 6}, mfrc522.Key{6, 5, 4, 3, 2, 1})
 }
