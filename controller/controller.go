@@ -38,7 +38,11 @@ func (c *controller) returnState(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	state := c.s.WaitForChange(id)
+	state, err := c.s.WaitForChange(r.Context(), id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	err = json.NewEncoder(w).Encode(state)
 	if err != nil {

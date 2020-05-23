@@ -18,7 +18,7 @@ import (
 )
 
 type Subscriber interface {
-	Notify(string)
+	Notify(string, string, string)
 }
 
 type Reader struct {
@@ -113,14 +113,26 @@ func (r *Reader) runloop() {
 			} else if strings.HasPrefix(err.Error(), "mfrc522 lowlevel: timeout waiting for IRQ edge: ") {
 				if old != "" {
 					old = ""
-					r.s.Notify(old)
+					r.s.Notify(old, "", "")
 				}
 			} else {
 				log.Printf("err from ReadCard: %s", err)
 			}
 		} else if old != string(data) {
+			b1, err := r.rfid.ReadCard(timeout, commands.PICC_AUTHENT1B, 0, 1, mfrc522.DefaultKey)
+			if err != nil {
+				log.Printf("err reading block 1")
+				continue
+			}
+
+			b2, err := r.rfid.ReadCard(timeout, commands.PICC_AUTHENT1B, 0, 2, mfrc522.DefaultKey)
+			if err != nil {
+				log.Printf("err reading block 2")
+				continue
+			}
+
 			old = string(data)
-			r.s.Notify(old)
+			r.s.Notify(old, string(b1), string(b2))
 		}
 	}
 }

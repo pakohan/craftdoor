@@ -34,14 +34,16 @@ func main() {
 }
 
 func start(cfg config.Config, db *sqlx.DB) error {
-	m := model.New(db)
-	s := service.New(cfg, m)
-	c := controller.New(m, s)
+	cl := lib.NewChangeListener()
 
-	_, err := lib.NewReader(cfg, s)
+	r, err := lib.NewReader(cfg, cl)
 	if err != nil {
 		return err
 	}
+
+	m := model.New(db)
+	s := service.New(m, r, cl)
+	c := controller.New(m, s)
 
 	return http.ListenAndServe(cfg.ListenHTTP, c)
 }
