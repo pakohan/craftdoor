@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	log.SetFlags(log.Llongfile)
+	log.SetFlags(log.Llongfile | log.Lmicroseconds)
 
 	cfg, err := config.ReadConfig()
 	if err != nil {
