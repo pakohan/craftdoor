@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"log"
 	"sync"
 
@@ -18,8 +19,9 @@ type Service struct {
 }
 
 type State struct {
-	S  string
-	ID uuid.UUID
+	ID              uuid.UUID `json:"id"`
+	IsCardAvailable bool      `json:"is_card_available"`
+	CardData        string    `json:"card_data"`
 }
 
 func New(cfg config.Config, m model.Model) *Service {
@@ -58,7 +60,8 @@ func (s *Service) Notify(state string) {
 
 	log.Printf("state changed to '%s'", state)
 
-	s.currentState.S = state
+	s.currentState.IsCardAvailable = state != ""
+	s.currentState.CardData = fmt.Sprintf("% x", []byte(state))
 	s.currentState.ID = uuid.New()
 	for _, l := range s.listeners {
 		l <- s.currentState
