@@ -129,7 +129,7 @@ func (r *Reader) read(timeout time.Duration) ([3]string, error) {
 	r.rlock.Lock()
 	defer r.rlock.Unlock()
 
-	b0, err := r.rfid.ReadCard(timeout, commands.PICC_AUTHENT1B, 0, 0, mfrc522.Key{6, 5, 4, 3, 2, 1})
+	b0, err := r.rfid.ReadCard(timeout, commands.PICC_AUTHENT1B, 2, 0, mfrc522.Key{6, 5, 4, 3, 2, 1})
 	if err != nil {
 		switch {
 		case err.Error() == "mfrc522 lowlevel: IRQ error": // card needs to be reinitialized, see https://github.com/google/periph/issues/425
@@ -141,12 +141,12 @@ func (r *Reader) read(timeout time.Duration) ([3]string, error) {
 		}
 	}
 
-	b1, err := r.rfid.ReadCard(timeout, commands.PICC_AUTHENT1B, 0, 1, mfrc522.Key{6, 5, 4, 3, 2, 1})
+	b1, err := r.rfid.ReadCard(timeout, commands.PICC_AUTHENT1B, 2, 1, mfrc522.Key{6, 5, 4, 3, 2, 1})
 	if err != nil {
 		return [3]string{}, err
 	}
 
-	b2, err := r.rfid.ReadCard(timeout, commands.PICC_AUTHENT1B, 0, 2, mfrc522.Key{6, 5, 4, 3, 2, 1})
+	b2, err := r.rfid.ReadCard(timeout, commands.PICC_AUTHENT1B, 2, 2, mfrc522.Key{6, 5, 4, 3, 2, 1})
 	if err != nil {
 		return [3]string{}, err
 	}
@@ -165,7 +165,7 @@ func (r *Reader) InitKey(keyID, keySecret [16]byte, oldKey, keyA, keyB mfrc522.K
 	defer log.Print("exit")
 
 	timeout := 10 * time.Second
-	err := r.rfid.WriteSectorTrail(timeout, commands.PICC_AUTHENT1A, 0, keyA, keyB, &mfrc522.BlocksAccess{
+	err := r.rfid.WriteSectorTrail(timeout, commands.PICC_AUTHENT1A, 2, keyA, keyB, &mfrc522.BlocksAccess{
 		B0: mfrc522.AnyKeyRWID,
 		B1: mfrc522.AnyKeyRWID,
 		B2: mfrc522.RAB_WB_IN_DN,
@@ -177,7 +177,7 @@ func (r *Reader) InitKey(keyID, keySecret [16]byte, oldKey, keyA, keyB mfrc522.K
 	log.Printf("successfully changed key of card % x to % x / % x", keyID, keyA, keyB)
 
 	for i, data := range [][16]byte{craftwerk, keyID, keySecret} {
-		err = r.rfid.WriteCard(timeout, commands.PICC_AUTHENT1B, 0, i, data, keyB)
+		err = r.rfid.WriteCard(timeout, commands.PICC_AUTHENT1B, 2, i, data, keyB)
 		if err != nil {
 			return err
 		}
