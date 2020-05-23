@@ -18,7 +18,7 @@ import (
 )
 
 type Subscriber interface {
-	Notify(string, string, string)
+	Notify([3]string)
 }
 
 type Reader struct {
@@ -26,6 +26,7 @@ type Reader struct {
 	deviceFile     string
 	rstPin, irqPin gpio.PinIO
 	lock           *sync.Mutex
+	rlock          *sync.Mutex
 	rfid           *mfrc522.Dev
 	p              spi.PortCloser
 }
@@ -52,6 +53,7 @@ func NewReader(cfg config.Config, s Subscriber) (*Reader, error) {
 		rstPin:     rstPinReg,
 		irqPin:     irqPinReg,
 		lock:       &sync.Mutex{},
+		rlock:      &sync.Mutex{},
 	}
 
 	err = r.initReader()
@@ -97,42 +99,56 @@ func (r *Reader) initReader() error {
 }
 
 func (r *Reader) runloop() {
-	var old string
+	var old [3]string
 	for range time.Tick(1 * time.Second) {
 		timeout := 10 * time.Second
-		if old != "" {
+		if old[0] != "" {
 			timeout = 0
 		}
-		data, err := r.rfid.ReadCard(timeout, commands.PICC_AUTHENT1B, 0, 0, mfrc522.DefaultKey)
+
+		data, err := r.read(timeout)
 		if err != nil {
-			if err.Error() == "mfrc522 lowlevel: IRQ error" {
-				err = r.initReader()
-				if err != nil {
-					log.Printf("err initializing pin after error: %s", err)
-				}
-			} else if strings.HasPrefix(err.Error(), "mfrc522 lowlevel: timeout waiting for IRQ edge: ") {
-				if old != "" {
-					old = ""
-					r.s.Notify(old, "", "")
-				}
-			} else {
-				log.Printf("err from ReadCard: %s", err)
-			}
-		} else if old != string(data) {
-			b1, err := r.rfid.ReadCard(timeout, commands.PICC_AUTHENT1B, 0, 1, mfrc522.DefaultKey)
-			if err != nil {
-				log.Printf("err reading block 1")
-				continue
-			}
+			log.Printf("err reading data: %s", err)
+			continue
+		}
 
-			b2, err := r.rfid.ReadCard(timeout, commands.PICC_AUTHENT1B, 0, 2, mfrc522.DefaultKey)
-			if err != nil {
-				log.Printf("err reading block 2")
-				continue
-			}
-
-			old = string(data)
-			r.s.Notify(old, string(b1), string(b2))
+		if data != old {
+			old = data
+			r.s.Notify(data)
 		}
 	}
+}
+
+func (r *Reader) read(timeout time.Duration) ([3]string, error) {
+	r.rlock.Lock()
+	defer r.rlock.Unlock()
+
+	b0, err := r.rfid.ReadCard(timeout, commands.PICC_AUTHENT1B, 0, 0, mfrc522.DefaultKey)
+	if err != nil {
+		if err.Error() == "mfrc522 lowlevel: IRQ error" {
+			return [3]string{}, r.initReader()
+		}
+
+		if strings.HasPrefix(err.Error(), "mfrc522 lowlevel: timeout waiting for IRQ edge: ") {
+			return [3]string{}, nil
+		}
+
+		return [3]string{}, err
+	}
+
+	b1, err := r.rfid.ReadCard(timeout, commands.PICC_AUTHENT1B, 0, 1, mfrc522.DefaultKey)
+	if err != nil {
+		return [3]string{}, err
+	}
+
+	b2, err := r.rfid.ReadCard(timeout, commands.PICC_AUTHENT1B, 0, 2, mfrc522.DefaultKey)
+	if err != nil {
+		return [3]string{}, err
+	}
+
+	return [3]string{
+		string(b0),
+		string(b1),
+		string(b2),
+	}, nil
 }

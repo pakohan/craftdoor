@@ -57,19 +57,19 @@ func (cl *ChangeListener) WaitForChange(ctx context.Context, id uuid.UUID) (Stat
 }
 
 // Notify changes the current state
-func (cl *ChangeListener) Notify(b0, b1, b2 string) {
+func (cl *ChangeListener) Notify(data [3]string) {
 	cl.lock.Lock()
 	defer cl.lock.Unlock()
 
-	log.Printf("state changed to: %s", b0)
+	log.Printf("state changed to: %s", data[0])
 
-	cl.currentState.IsCardAvailable = b0 != ""
-	cl.currentState.CardData = []string{
-		fmt.Sprintf("% x", []byte(b0)),
-		fmt.Sprintf("% x", []byte(b1)),
-		fmt.Sprintf("% x", []byte(b2)),
-	}
+	cl.currentState.IsCardAvailable = data[0] != ""
 	cl.currentState.ID = uuid.New()
+	cl.currentState.CardData = make([]string, len(data))
+	for i, s := range data {
+		cl.currentState.CardData[i] = fmt.Sprintf("% x", s)
+	}
+
 	for _, l := range cl.listeners {
 		l <- cl.currentState
 		close(l)
