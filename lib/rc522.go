@@ -162,6 +162,8 @@ func (r *Reader) InitKey(keyID, keySecret [16]byte, oldKey, keyA, keyB mfrc522.K
 	r.rlock.Lock()
 	defer r.rlock.Unlock()
 
+	defer log.Print("exit")
+
 	timeout := 10 * time.Second
 	err := r.rfid.WriteSectorTrail(timeout, commands.PICC_AUTHENT1A, 0, keyA, keyB, &mfrc522.BlocksAccess{
 		B0: mfrc522.AnyKeyRWID,
