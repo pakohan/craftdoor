@@ -3,6 +3,7 @@ package lib
 import (
 	"context"
 	"fmt"
+	"log"
 	"sync"
 
 	"github.com/google/uuid"
@@ -59,6 +60,8 @@ func (cl *ChangeListener) WaitForChange(ctx context.Context, id uuid.UUID) (Stat
 func (cl *ChangeListener) Notify(b0, b1, b2 string) {
 	cl.lock.Lock()
 	defer cl.lock.Unlock()
+
+	log.Printf("state changed to: %s", b0)
 
 	cl.currentState.IsCardAvailable = b0 != ""
 	cl.currentState.CardData = []string{
