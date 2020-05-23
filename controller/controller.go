@@ -28,6 +28,7 @@ func New(m model.Model, s *service.Service) http.Handler {
 		Handler: handlers.CORS()(r),
 	}
 	r.Methods(http.MethodGet).Path("/state").HandlerFunc(c.returnState)
+	r.Methods(http.MethodPost).Path("/init").HandlerFunc(c.initCard)
 	return c
 }
 
@@ -48,6 +49,14 @@ func (c *controller) returnState(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		log.Printf("err encoding response: %s", err)
+		return
+	}
+}
+
+func (c *controller) initCard(w http.ResponseWriter, r *http.Request) {
+	err := c.s.InitKey(r.Context())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 }

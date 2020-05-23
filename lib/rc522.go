@@ -17,6 +17,12 @@ import (
 	"periph.io/x/periph/host"
 )
 
+var craftwerk [16]byte
+
+func init() {
+	copy(craftwerk[:], "craftwerk")
+}
+
 type Subscriber interface {
 	Notify([3]string)
 }
@@ -125,15 +131,14 @@ func (r *Reader) read(timeout time.Duration) ([3]string, error) {
 
 	b0, err := r.rfid.ReadCard(timeout, commands.PICC_AUTHENT1B, 0, 0, mfrc522.DefaultKey)
 	if err != nil {
-		if err.Error() == "mfrc522 lowlevel: IRQ error" {
+		switch {
+		case err.Error() == "mfrc522 lowlevel: IRQ error": // card needs to be reinitialized, see https://github.com/google/periph/issues/425
 			return [3]string{}, r.initReader()
-		}
-
-		if strings.HasPrefix(err.Error(), "mfrc522 lowlevel: timeout waiting for IRQ edge: ") {
+		case strings.HasPrefix(err.Error(), "mfrc522 lowlevel: timeout waiting for IRQ edge: "): // there's no card
 			return [3]string{}, nil
+		default: // any other error
+			return [3]string{}, err
 		}
-
-		return [3]string{}, err
 	}
 
 	b1, err := r.rfid.ReadCard(timeout, commands.PICC_AUTHENT1B, 0, 1, mfrc522.DefaultKey)
@@ -151,4 +156,30 @@ func (r *Reader) read(timeout time.Duration) ([3]string, error) {
 		string(b1),
 		string(b2),
 	}, nil
+}
+
+func (r *Reader) InitKey(keyID, keySecret [16]byte, oldKey, keyA, keyB mfrc522.Key) error {
+	r.rlock.Lock()
+	defer r.rlock.Unlock()
+
+	timeout := 10 * time.Second
+	err := r.rfid.WriteSectorTrail(timeout, commands.PICC_AUTHENT1A, 0, keyA, keyB, &mfrc522.BlocksAccess{
+		B0: mfrc522.AnyKeyRWID,
+		B1: mfrc522.AnyKeyRWID,
+		B2: mfrc522.RAB_WB_IN_DN,
+		B3: mfrc522.KeyA_RN_WA_BITS_RA_WA_KeyB_RA_WA,
+	}, oldKey)
+	if err != nil {
+		return err
+	}
+	log.Printf("successfully changed key of card % x to % x / % x", keyID, keyA, keyB)
+
+	for i, data := range [][16]byte{craftwerk, keyID, keySecret} {
+		err = r.rfid.WriteCard(timeout, commands.PICC_AUTHENT1B, 0, i, data, keyB)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
