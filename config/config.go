@@ -29,6 +29,7 @@ func ReadConfig() (Config, error) {
 
 func readFile(filename string) (Config, error) {
 	log.Printf("reading config from '%s'", filename)
+	// #nosec G304
 	f, err := os.Open(filename)
 	if err != nil {
 		return Config{}, err
