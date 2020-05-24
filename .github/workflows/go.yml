@@ -48,9 +48,6 @@ jobs:
       - name: staticcheck
         run: staticcheck ./...
 
-      - name: gofmt
-        run: out=$(gofmt -s -l -d -e . | tee /dev/stderr); if [ -n "$$out" ]; then exit 1; fi;
-
       - name: errcheck
         run: errcheck -verbose ./...
 
@@ -58,3 +55,6 @@ jobs:
         uses: securego/gosec@master
         with:
           args: ./...
+
+      - name: gofmt
+        run: test -z $(gofmt -s -l -d -e . | tee /dev/stderr)
