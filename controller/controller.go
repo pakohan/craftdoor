@@ -33,9 +33,9 @@ func New(m model.Model, s *service.Service) http.Handler {
 	r.Methods(http.MethodGet).Path("/state").HandlerFunc(c.returnState)
 	r.Methods(http.MethodPost).Path("/init").HandlerFunc(c.initCard)
 
-	doors.New(r.Path("/doors"), m)
-	members.New(r.Path("/members"), m)
-	roles.New(r.Path("/roles"), m)
+	doors.New(r.PathPrefix("/doors"), m)
+	members.New(r.PathPrefix("/members"), m)
+	roles.New(r.PathPrefix("/roles"), m)
 	return c
 }
 
