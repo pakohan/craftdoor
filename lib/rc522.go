@@ -27,6 +27,7 @@ type reader struct {
 	p              spi.PortCloser
 }
 
+// NewRC522Reader returns a new Reader implementation accessing the RC522 reader via SPI on a RPI GPIO board.
 func NewRC522Reader(cfg config.Config, s Subscriber) (Reader, error) {
 	_, err := host.Init()
 	if err != nil {
