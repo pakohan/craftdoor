@@ -37,10 +37,10 @@ jobs:
       - name: install tools
         working-directory: /home/runner/work
         run: |
-          go env
           go get golang.org/x/lint/golint
           go get github.com/kisielk/errcheck
           go get honnef.co/go/tools/cmd/staticcheck
+          go get github.com/securego/gosec/cmd/gosec
 
       - name: golint
         run: golint $(go list ./... )
@@ -51,10 +51,8 @@ jobs:
       - name: errcheck
         run: errcheck ./...
 
-      - name: Run Gosec Security Scanner
-        uses: securego/gosec@master
-        with:
-          args: ./...
+      - name: gosec
+        run: gosec ./...
 
       - name: gofmt
         run: test -z $(gofmt -s -l -d -e . | tee /dev/stderr)
