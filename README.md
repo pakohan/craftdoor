@@ -1,3 +1,5 @@
+![Go](https://github.com/pakohan/craftdoor/workflows/Go/badge.svg)
+
 # craftdoor
 
 A RFID based access control system written in Go
