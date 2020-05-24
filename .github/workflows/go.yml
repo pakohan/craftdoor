@@ -37,9 +37,9 @@ jobs:
       - name: install tools
         working-directory: $(GOPATH)
         run: |
-          go install -u golang.org/x/lint/golint
-          go install -u github.com/kisielk/errcheck
-          go install honnef.co/go/tools/cmd/staticcheck
+          go get golang.org/x/lint/golint
+          go get github.com/kisielk/errcheck
+          go get honnef.co/go/tools/cmd/staticcheck
 
       - name: Rurest
         run: |
