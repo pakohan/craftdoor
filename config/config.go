@@ -2,20 +2,44 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
+	"log"
 	"os"
 )
 
+// ReadConfig reads the config file.
+// If the service is started with an argument it's assuming this is a path to a config JSON file.
+// If no argument is passed it checks:
+//   * /etc/craftdoor/master.json
+//   * ./develop.json
 func ReadConfig() (Config, error) {
-	cfg := Config{}
-	f, err := os.Open("/etc/craftdoor/master.json")
+	if len(os.Args) > 1 {
+		return readFile(os.Args[1])
+	}
+
+	for _, f := range []string{"/etc/craftdoor/master.json", "./develop.json"} {
+		_, err := os.Stat(f)
+		if err == nil {
+			return readFile(f)
+		}
+	}
+
+	return Config{}, fmt.Errorf("could not find config file")
+}
+
+func readFile(filename string) (Config, error) {
+	log.Printf("reading config from '%s'", filename)
+	f, err := os.Open(filename)
 	if err != nil {
-		return cfg, err
+		return Config{}, err
 	}
 	defer f.Close()
 
+	cfg := Config{}
 	return cfg, json.NewDecoder(f).Decode(&cfg)
 }
 
+// Config represents the config file contents
 type Config struct {
 	MasterKey  string `json:"master_key"`
 	SQLiteFile string `json:"sqlite_file"`
