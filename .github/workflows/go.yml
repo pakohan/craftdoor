@@ -37,6 +37,8 @@ jobs:
       - name: install tools
         working-directory: $(GOPATH)
         run: |
+          pwd
+          echo $(GOPATH)
           go get golang.org/x/lint/golint
           go get github.com/kisielk/errcheck
           go get honnef.co/go/tools/cmd/staticcheck
