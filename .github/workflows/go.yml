@@ -42,15 +42,17 @@ jobs:
           go get github.com/kisielk/errcheck
           go get honnef.co/go/tools/cmd/staticcheck
 
-      - name: Rurest
-        run: |
-          golint $(go list ./... )
-          staticcheck ./...
-          out=$(gofmt -s -l -d -e . | tee /dev/stderr)
-          if [ -n "$$out" ];
-            then exit 1;
-          fi;
-          errcheck -verbose ./...
+      - name: golint
+        run: golint $(go list ./... )
+
+      - name: staticcheck
+        run: staticcheck ./...
+
+      - name: gofmt
+        run: out=$(gofmt -s -l -d -e . | tee /dev/stderr); if [ -n "$$out" ]; then exit 1; fi;
+
+      - name: errcheck
+        run: errcheck -verbose ./...
 
       - name: Run Gosec Security Scanner
         uses: securego/gosec@master
