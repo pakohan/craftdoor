@@ -26,16 +26,40 @@ type controller struct {
 func New(m model.Model, s *service.Service) http.Handler {
 	r := mux.NewRouter()
 	c := &controller{
-		m:       m,
-		s:       s,
-		Handler: handlers.CORS()(r),
+		m: m,
+		s: s,
+		Handler: handlers.CORS(
+			handlers.AllowedOrigins([]string{
+				"http://localhost:8081",
+			}),
+			handlers.AllowedHeaders([]string{
+				"Authorization",
+				"Content-Type",
+				"Accept",
+				"Origin",
+				"User-Agent",
+				"DNT",
+				"Cache-Control",
+				"X-Mx-ReqToken",
+				"Keep-Alive",
+				"X-Requested-With",
+				"If-Modified-Since",
+			}),
+			handlers.AllowedMethods([]string{
+				"GET",
+				"PUT",
+				"POST",
+				"DELETE",
+				"HEAD",
+			}),
+		)(r),
 	}
-	r.Methods(http.MethodGet).Path("/state").HandlerFunc(c.returnState)
-	r.Methods(http.MethodPost).Path("/init").HandlerFunc(c.initCard)
+	r.Path("/state").Methods(http.MethodGet).HandlerFunc(c.returnState)
+	r.Path("/init").Methods(http.MethodPost).HandlerFunc(c.initCard)
 
-	doors.New(r.PathPrefix("/doors"), m)
-	members.New(r.PathPrefix("/members"), m)
-	roles.New(r.PathPrefix("/roles"), m)
+	doors.New(r.PathPrefix("/doors").Subrouter(), m)
+	members.New(r.PathPrefix("/members").Subrouter(), m)
+	roles.New(r.PathPrefix("/roles").Subrouter(), m)
 	return c
 }
 

@@ -17,17 +17,7 @@ import (
 	"periph.io/x/periph/host"
 )
 
-var craftwerk [16]byte
-
-func init() {
-	copy(craftwerk[:], "craftwerk")
-}
-
-type Subscriber interface {
-	Notify([3]string)
-}
-
-type Reader struct {
+type reader struct {
 	s              Subscriber
 	deviceFile     string
 	rstPin, irqPin gpio.PinIO
@@ -37,7 +27,7 @@ type Reader struct {
 	p              spi.PortCloser
 }
 
-func NewReader(cfg config.Config, s Subscriber) (*Reader, error) {
+func NewRC522Reader(cfg config.Config, s Subscriber) (Reader, error) {
 	_, err := host.Init()
 	if err != nil {
 		return nil, err
@@ -53,7 +43,7 @@ func NewReader(cfg config.Config, s Subscriber) (*Reader, error) {
 		return nil, fmt.Errorf("IRQ pin %s can not be found", cfg.IRQPin)
 	}
 
-	r := &Reader{
+	r := &reader{
 		s:          s,
 		deviceFile: cfg.Device,
 		rstPin:     rstPinReg,
@@ -62,7 +52,7 @@ func NewReader(cfg config.Config, s Subscriber) (*Reader, error) {
 		rlock:      &sync.Mutex{},
 	}
 
-	err = r.initReader()
+	err = r.initreader()
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +61,7 @@ func NewReader(cfg config.Config, s Subscriber) (*Reader, error) {
 	return r, nil
 }
 
-func (r *Reader) initReader() error {
+func (r *reader) initreader() error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -104,7 +94,7 @@ func (r *Reader) initReader() error {
 	return nil
 }
 
-func (r *Reader) runloop() {
+func (r *reader) runloop() {
 	var old [3]string
 	for range time.Tick(1 * time.Second) {
 		timeout := 10 * time.Second
@@ -125,7 +115,7 @@ func (r *Reader) runloop() {
 	}
 }
 
-func (r *Reader) read(timeout time.Duration) ([3]string, error) {
+func (r *reader) read(timeout time.Duration) ([3]string, error) {
 	r.rlock.Lock()
 	defer r.rlock.Unlock()
 
@@ -133,7 +123,7 @@ func (r *Reader) read(timeout time.Duration) ([3]string, error) {
 	if err != nil {
 		switch {
 		case err.Error() == "mfrc522 lowlevel: IRQ error": // card needs to be reinitialized, see https://github.com/google/periph/issues/425
-			return [3]string{}, r.initReader()
+			return [3]string{}, r.initreader()
 		case strings.HasPrefix(err.Error(), "mfrc522 lowlevel: timeout waiting for IRQ edge: "): // there's no card
 			return [3]string{}, nil
 		default: // any other error
@@ -158,7 +148,7 @@ func (r *Reader) read(timeout time.Duration) ([3]string, error) {
 	}, nil
 }
 
-func (r *Reader) InitKey(keyID, keySecret [16]byte, oldKey, keyA, keyB mfrc522.Key) error {
+func (r *reader) InitKey(keyID, keySecret [16]byte, oldKey, keyA, keyB mfrc522.Key) error {
 	r.rlock.Lock()
 	defer r.rlock.Unlock()
 

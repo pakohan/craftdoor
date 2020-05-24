@@ -63,7 +63,8 @@ VALUES
 	queryList = `
 SELECT "id"
 	, "name"
-FROM "member"`
+FROM "member"
+ORDER BY "id"`
 	queryUpdate = `
 UPDATE "member"
 SET "name" = :name

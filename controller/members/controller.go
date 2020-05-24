@@ -16,7 +16,7 @@ type controller struct {
 }
 
 // New initializes a new router
-func New(r *mux.Route, m model.Model) {
+func New(r *mux.Router, m model.Model) {
 	c := controller{
 		m: m,
 	}

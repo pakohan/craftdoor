@@ -16,9 +16,14 @@ import (
 func main() {
 	log.SetFlags(log.Llongfile)
 
-	cfg, err := config.ReadConfig()
-	if err != nil {
-		log.Panic(err)
+	// cfg, err := config.ReadConfig()
+	// if err != nil {
+	// 	log.Panic(err)
+	// }
+
+	cfg := config.Config{
+		SQLiteFile: "/Users/mogli/Desktop/test.db",
+		ListenHTTP: ":8080",
 	}
 
 	db, err := sqlx.Connect("sqlite3", cfg.SQLiteFile)
@@ -36,14 +41,17 @@ func main() {
 func start(cfg config.Config, db *sqlx.DB) error {
 	cl := lib.NewChangeListener()
 
-	r, err := lib.NewReader(cfg, cl)
-	if err != nil {
-		return err
-	}
+	r := lib.NewDummyReader()
+
+	// r, err := lib.NewRC522Reader(cfg, cl)
+	// if err != nil {
+	// 	return err
+	// }
 
 	m := model.New(db)
 	s := service.New(m, r, cl)
 	c := controller.New(m, s)
 
+	log.Printf("listening on %s", cfg.ListenHTTP)
 	return http.ListenAndServe(cfg.ListenHTTP, c)
 }

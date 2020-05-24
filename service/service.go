@@ -11,11 +11,11 @@ import (
 
 type Service struct {
 	m  model.Model
-	r  *lib.Reader
+	r  lib.Reader
 	cl *lib.ChangeListener
 }
 
-func New(m model.Model, r *lib.Reader, cl *lib.ChangeListener) *Service {
+func New(m model.Model, r lib.Reader, cl *lib.ChangeListener) *Service {
 	return &Service{
 		m:  m,
 		r:  r,
