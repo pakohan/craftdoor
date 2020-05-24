@@ -43,7 +43,7 @@ jobs:
           go get github.com/securego/gosec/cmd/gosec
 
       - name: golint
-        run: golint $(go list ./... )
+        run: test -z $(golint $(go list ./... ))
 
       - name: staticcheck
         run: staticcheck ./...
