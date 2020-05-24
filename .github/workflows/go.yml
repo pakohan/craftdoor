@@ -10,6 +10,8 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    env:
+      GO111MODULE: on
     steps:
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
@@ -32,11 +34,6 @@ jobs:
       - name: Vet
         run: go vet -v ./...
 
-      - name: Run Gosec Security Scanner
-        uses: securego/gosec@master
-        with:
-          args: ./...
-
       - name: Rurest
         run: |
           go get -u golang.org/x/lint/golint
@@ -49,3 +46,8 @@ jobs:
           fi;
           go get -u github.com/kisielk/errcheck
           errcheck -verbose ./...
+
+      - name: Run Gosec Security Scanner
+        uses: securego/gosec@master
+        with:
+          args: ./...
