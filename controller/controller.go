@@ -8,6 +8,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/pakohan/craftdoor/controller/doors"
+	"github.com/pakohan/craftdoor/controller/members"
+	"github.com/pakohan/craftdoor/controller/roles"
 	"github.com/pakohan/craftdoor/model"
 	"github.com/pakohan/craftdoor/service"
 )
@@ -29,6 +32,10 @@ func New(m model.Model, s *service.Service) http.Handler {
 	}
 	r.Methods(http.MethodGet).Path("/state").HandlerFunc(c.returnState)
 	r.Methods(http.MethodPost).Path("/init").HandlerFunc(c.initCard)
+
+	doors.New(r.Path("/doors"), m)
+	members.New(r.Path("/members"), m)
+	roles.New(r.Path("/roles"), m)
 	return c
 }
 
