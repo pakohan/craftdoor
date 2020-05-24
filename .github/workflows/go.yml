@@ -35,9 +35,9 @@ jobs:
         run: go vet -v ./...
 
       - name: install tools
+        working-directory: /home/runner/work
         run: |
-          pwd
-          echo $(GOPATH)
+          go env
           go get golang.org/x/lint/golint
           go get github.com/kisielk/errcheck
           go get honnef.co/go/tools/cmd/staticcheck
