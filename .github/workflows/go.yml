@@ -34,17 +34,21 @@ jobs:
       - name: Vet
         run: go vet -v ./...
 
+      - name: install tools
+        working-directory: $(GOPATH)
+        run: |
+          go install -u golang.org/x/lint/golint
+          go install -u github.com/kisielk/errcheck
+          go install honnef.co/go/tools/cmd/staticcheck
+
       - name: Rurest
         run: |
-          go get -u golang.org/x/lint/golint
           golint $(go list ./... )
-          go get honnef.co/go/tools/cmd/staticcheck
           staticcheck ./...
           out=$$(gofmt -s -l -d -e $(gofile) | tee /dev/stderr);
           if [ -n "$$out" ];
             then exit 1;
           fi;
-          go get -u github.com/kisielk/errcheck
           errcheck -verbose ./...
 
       - name: Run Gosec Security Scanner
