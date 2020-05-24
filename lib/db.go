@@ -26,7 +26,12 @@ func InitDBSchema(db *sqlx.DB) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() {
+		e := f.Close()
+		if e != nil {
+			log.Printf("failed closing schema file: %s", e.Error())
+		}
+	}()
 
 	b, err := ioutil.ReadAll(f)
 	if err != nil {

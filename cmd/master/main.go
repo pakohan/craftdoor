@@ -30,7 +30,6 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
-	defer db.Close()
 
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
@@ -108,7 +107,10 @@ func openDB(filename string) (*sqlx.DB, error) {
 
 	err = lib.InitDBSchema(db)
 	if err != nil {
-		db.Close()
+		e := db.Close()
+		if e != nil {
+			log.Printf("err closing db after initializing schema failed: %s", e.Error())
+		}
 		return nil, err
 	}
 

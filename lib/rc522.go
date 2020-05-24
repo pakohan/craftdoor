@@ -90,8 +90,7 @@ func (r *reader) initreader() error {
 		return err
 	}
 
-	r.rfid.SetAntennaGain(5)
-	return nil
+	return r.rfid.SetAntennaGain(5)
 }
 
 func (r *reader) runloop() {

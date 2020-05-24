@@ -33,7 +33,12 @@ func readFile(filename string) (Config, error) {
 	if err != nil {
 		return Config{}, err
 	}
-	defer f.Close()
+	defer func() {
+		e := f.Close()
+		if e != nil {
+			log.Printf("failed closing config file: %s", e.Error())
+		}
+	}()
 
 	cfg := Config{}
 	return cfg, json.NewDecoder(f).Decode(&cfg)
