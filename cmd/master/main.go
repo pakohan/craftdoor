@@ -67,7 +67,7 @@ func start(cfg config.Config, db *sqlx.DB, wg *sync.WaitGroup) error {
 			return err
 		}
 	} else {
-		r = lib.NewDummyReader()
+		r =lib.NewDummyReader()
 	}
 
 	m := model.New(db)
