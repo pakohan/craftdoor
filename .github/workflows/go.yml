@@ -46,7 +46,7 @@ jobs:
         run: |
           golint $(go list ./... )
           staticcheck ./...
-          out=$$(gofmt -s -l -d -e $(gofile) | tee /dev/stderr);
+          out=$(gofmt -s -l -d -e . | tee /dev/stderr)
           if [ -n "$$out" ];
             then exit 1;
           fi;
