@@ -7,42 +7,48 @@ tag readers + MIFARE RFID tags.
 
 # Project Overview
 
-Run the program from the `cmd/master` directory. If one argument is provided, it
-assumes this is the path to a config JSON file.  If none is provided, it first
-looks up `/etc/craftdoor/master.json` (for production use) and then
-`./develop.json` in the `cmd/master` directory.  That second file is already
-present for development and provides all defaults needed for local execution.
+Craftdoor is a software suite for an RFID-powered door access system on a
+federation of Raspberry Pi devices. With the exception of the "master", each
+Raspberry Pi is connected to an [RFID
+reader](https://www.nxp.com/docs/en/data-sheet/MFRC522.pdf) and a door.
+Registered members may tap the RFID reader with their MIFARE RFID tag to open
+the adjacent door.
 
-After starting, it checks whether the sqlite db file mentioned in the config
-has any tables. If not, it executes `schema.sql` from the `cmd/master` directory
-to set up the schema.
+The system is administered via a WebUI interface and accompanying REST API
+served by the master device. Persistent state is stored in a SQLite database on
+the master device. See below for valid endpoints.
 
-Next, it checks whether
-[periph.io/x/periph/host/rpi#Present](http://pkg.go.dev/periph.io/x/periph/host/rpi#Present)
-returns true. If so, it uses the GPI pins and spi device file mentioned in the
-config file to connect to the RFID reader.  If not, it uses a dummy reader
-doing nothing for local development.
+Instructions below for building, configuring, and launching the webserver.
 
-In a nutshell: `cd cmd/master && go run main.go` should setup the DB, detect
-the platform and start a webserver listening on :8080 for easy development
-
+**Note**: At time of writing, only a single "master" Raspberry Pi is supported.
 
 # Installation
 
-1. Download `golang` from https://golang.org. You may follow the instructions
-   [here](https://golang.org/doc/install#install).
-1. Run `main.go`. This will launch a webserver listening on port 8080.
+To start the software suite, do the following on the master Raspberry Pi device,
+
+1. Connect RC522 to master Raspberry Pi's hardware SPI interface. Follow
+   instructions [here](https://github.com/pakohan/craftdoor.git).
+1. Download `golang` from https://golang.org. Follow installation instructions
+   [here](https://golang.org/doc/install#install). Verify that go is installed
+   by running `go version` in a terminal.
+1. Run `cmd/master/main.go`. This will launch a webserver listening on port 8080.
   ```
-  $ cd cmd/master
+  $ git clone https://github.com/pakohan/craftdoor.git
+  $ cd craftdoor/cmd/master
   $ go run main.go develop.json
   ```
+
+**Note**: If the RC522 RFID reader is not
+[detected](http://pkg.go.dev/periph.io/x/periph/host/rpi#Present), a fake,
+dummy interface will be used. This dummy interface cannot interact with RFID
+tags.
 
 # Usage
 
 Once `main.go` is launched, the following endpoints are available via the HTTP
 webserver,
 
-- `POST /init`: Writes a sector on an active RFID tag. Only for testing.
+- `POST /init`: Writes a default key to an active RFID tag. Only for testing.
 - `GET /state?id=<UUID>`: Get the state of a particular RFID tag as soon as
   it's put in front of the reader. You must specify which tag you want by its
   UUID.
