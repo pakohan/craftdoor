@@ -8,6 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/pakohan/craftdoor/model"
+	"github.com/pakohan/craftdoor/model/doorrole"
 	"github.com/pakohan/craftdoor/model/role"
 )
 
@@ -21,6 +22,7 @@ func New(r *mux.Router, m model.Model) {
 		m: m,
 	}
 
+	r.Methods(http.MethodPost).Path("/{id}/doors/{door_id}").HandlerFunc(c.addDoor)
 	r.Methods(http.MethodPost).HandlerFunc(c.create)
 	r.Methods(http.MethodGet).HandlerFunc(c.list)
 	r.Methods(http.MethodPut).Path("/{id}").HandlerFunc(c.update)
@@ -89,6 +91,33 @@ func (c *controller) delete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = c.m.RoleModel.Delete(r.Context(), id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+}
+
+func (c *controller) addDoor(w http.ResponseWriter, r *http.Request) {
+	t := doorrole.DoorRole{}
+	err := json.NewDecoder(r.Body).Decode(&t)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	t.RoleID, err = strconv.ParseInt(mux.Vars(r)["id"], 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	t.DoorID, err = strconv.ParseInt(mux.Vars(r)["door_id"], 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = c.m.DoorroleModel.Create(r.Context(), &t)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

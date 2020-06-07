@@ -53,6 +53,15 @@ func (m *Model) IsAccessAllowed(ctx context.Context, keyID string, doorID int64)
 	return res, err
 }
 
+func (m *Model) AssignMember(ctx context.Context, keyID, memberID int64) error {
+	mID := &memberID
+	if memberID == 0 {
+		mID = nil
+	}
+	_, err := m.db.ExecContext(ctx, queryAssign, mID, keyID)
+	return err
+}
+
 const (
 	queryCreate = `
 INSERT INTO "main"."key"
@@ -67,6 +76,10 @@ SELECT "id"
 	, "access_key"
 FROM "key"
 ORDER BY "id"`
+	queryAssign = `
+UPDATE "key"
+SET "member_id" = ?
+WHERE "id" = ?`
 	accessAllowed = `
 WITH time_seconds (
 	SELECT strftime('%s',CURRENT_TIMESTAMP) - strftime('%s', DATE(CURRENT_TIMESTAMP)) as sec
