@@ -23,6 +23,20 @@ func New(r *mux.Router, m model.Model, s *service.Service) {
 	}
 
 	r.Methods(http.MethodPost).Path("/register").HandlerFunc(c.register)
+	r.Methods(http.MethodGet).HandlerFunc(c.list)
+}
+
+func (c *controller) list(w http.ResponseWriter, r *http.Request) {
+	res, err := c.m.KeyModel.List(r.Context())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(res)
+	if err != nil {
+		log.Printf("err encoding response: %s", err.Error())
+	}
 }
 
 func (c *controller) register(w http.ResponseWriter, r *http.Request) {

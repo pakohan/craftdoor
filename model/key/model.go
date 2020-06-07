@@ -25,6 +25,16 @@ type Key struct {
 	AccessKey string `json:"access_key" db:"access_key"`
 }
 
+// List returns all entries from the table
+func (m *Model) List(ctx context.Context) ([]Key, error) {
+	res := []Key{}
+	err := m.db.SelectContext(ctx, &res, queryList)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
 // Create inserts a new row into the table
 func (m *Model) Create(ctx context.Context, k *Key) error {
 	res, err := m.db.NamedExecContext(ctx, queryCreate, k)
@@ -50,6 +60,13 @@ INSERT INTO "main"."key"
 VALUES
 (:secret, :access_key)
 ON CONFLICT DO NOTHING`
+	queryList = `
+SELECT "id"
+	, "member_id"
+	, "secret"
+	, "access_key"
+FROM "key"
+ORDER BY "id"`
 	accessAllowed = `
 WITH time_seconds (
 	SELECT strftime('%s',CURRENT_TIMESTAMP) - strftime('%s', DATE(CURRENT_TIMESTAMP)) as sec
