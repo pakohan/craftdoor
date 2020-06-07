@@ -32,6 +32,7 @@ func New(m model.Model, s *service.Service) http.Handler {
 		Handler: handlers.CORS(
 			handlers.AllowedOrigins([]string{
 				"http://localhost:8081",
+				"http://localhost:8080",
 			}),
 			handlers.AllowedHeaders([]string{
 				"Authorization",
