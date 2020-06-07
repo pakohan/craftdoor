@@ -40,10 +40,13 @@ func (s *Service) InitKey(ctx context.Context) error {
 }
 
 func (s *Service) RegisterKey(ctx context.Context) (key.Key, error) {
+	log.Printf("registering key")
 	state, err := s.cl.ReturnFirstKey(ctx)
 	if err != nil {
 		return key.Key{}, err
 	}
+
+	log.Printf("got key %s", state.CardData[0])
 
 	k := key.Key{
 		Secret:    state.CardData[0],
@@ -54,6 +57,8 @@ func (s *Service) RegisterKey(ctx context.Context) (key.Key, error) {
 		return key.Key{}, err
 	}
 
+	log.Printf("inserted as key id %d", k.ID)
+
 	return k, nil
 }
 
@@ -63,6 +68,8 @@ func (s *Service) door() {
 		state, err := s.WaitForChange(context.Background(), uid)
 		if err != nil {
 			log.Printf("got err waiting for change: %s", err.Error())
+			continue
+		} else if !state.IsCardAvailable {
 			continue
 		}
 		uid = state.ID
