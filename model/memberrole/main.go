@@ -2,6 +2,7 @@ package memberrole
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -26,6 +27,7 @@ type MemberRole struct {
 
 // Create creates a new entry in the table
 func (m *Model) Create(ctx context.Context, t *MemberRole) error {
+	log.Printf("create memberrole %+v", t)
 	_, err := m.db.NamedExecContext(ctx, queryCreate, t)
 	return err
 }
