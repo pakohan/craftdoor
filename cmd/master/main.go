@@ -65,8 +65,10 @@ func start(cfg config.Config, db *sqlx.DB, wg *sync.WaitGroup) error {
 		if err != nil {
 			return err
 		}
+		log.Printf("initializing rpi reader")
 	} else {
 		r = lib.NewDummyReader()
+		log.Printf("initializing dummy reader")
 	}
 
 	m := model.New(db)
