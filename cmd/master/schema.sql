@@ -36,10 +36,10 @@ CREATE TABLE "main"."door_role" (
   UNIQUE("door_id", "role_id")
 );
 
-CREATE TRIGGER door_role_updated_at BEFORE UPDATE ON "main"."door_role" FOR EACH ROW
-BEGIN
-  UPDATE "door_role" SET "updated_at" = CURRENT_TIMESTAMP WHERE "id" = new."id";
-END;
+-- CREATE TRIGGER door_role_updated_at BEFORE UPDATE ON "main"."door_role" FOR EACH ROW
+-- BEGIN
+--   UPDATE "door_role" SET "updated_at" = CURRENT_TIMESTAMP WHERE "id" = new."id";
+-- END;
 
 --
 
@@ -66,10 +66,10 @@ CREATE TABLE "main"."member_role" (
   UNIQUE("member_id", "role_id")
 );
 
-CREATE TRIGGER member_role_updated_at BEFORE UPDATE ON "main"."member_role" FOR EACH ROW
-BEGIN
-  UPDATE "member_role" SET "updated_at" = CURRENT_TIMESTAMP WHERE "id" = new."id";
-END;
+-- CREATE TRIGGER member_role_updated_at BEFORE UPDATE ON "main"."member_role" FOR EACH ROW
+-- BEGIN
+--   UPDATE "member_role" SET "updated_at" = CURRENT_TIMESTAMP WHERE "id" = new."id";
+-- END;
 
 --
 
