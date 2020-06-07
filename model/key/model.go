@@ -85,8 +85,6 @@ JOIN member_role
 	ON (key.member_id = member_role.member_id)
 JOIN door_role
 	ON (member_role.role_id = door_role.role_id)
-JOIN time_seconds
-	ON (TRUE)
 WHERE key.secret = ?
 AND door_role.door_id = ?
 AND (member_role.expires_at > CURRENT_TIMESTAMP OR member_role.expires_at IS NULL)
