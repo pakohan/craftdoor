@@ -25,11 +25,12 @@ type Model struct {
 // New returns all models initialized
 func New(db *sqlx.DB) Model {
 	return Model{
-		AccessModel:   access.New(db),
-		DoorModel:     door.New(db),
-		DoorroleModel: doorrole.New(db),
-		KeyModel:      key.New(db),
-		MemberModel:   member.New(db),
-		RoleModel:     role.New(db),
+		AccessModel:     access.New(db),
+		DoorModel:       door.New(db),
+		DoorroleModel:   doorrole.New(db),
+		KeyModel:        key.New(db),
+		MemberModel:     member.New(db),
+		MemberroleModel: memberrole.New(db),
+		RoleModel:       role.New(db),
 	}
 }

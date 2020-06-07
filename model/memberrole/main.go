@@ -31,9 +31,9 @@ func (m *Model) Create(ctx context.Context, t *MemberRole) error {
 }
 
 // List returns all entries from the table
-func (m *Model) List(ctx context.Context) ([]MemberRole, error) {
+func (m *Model) List(ctx context.Context, memberID, roleID uint64) ([]MemberRole, error) {
 	res := []MemberRole{}
-	err := m.db.SelectContext(ctx, &res, queryList)
+	err := m.db.SelectContext(ctx, &res, queryList, memberID, memberID, roleID, roleID)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,9 @@ SET "expires_at" = :expires_at`
 SELECT "member_id"
 	, "role_id"
 	, "expires_at"
-FROM "member_role"`
+FROM "member_role"
+WHERE (? = 0 OR "member_id" = ?)
+AND (? = 0 OR "role_id" = ?)`
 	queryUpdate = `
 UPDATE "member_role"
 SET "expires_at" = :expires_at
