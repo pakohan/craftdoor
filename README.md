@@ -30,7 +30,12 @@ To start the software suite, do the following on the master Raspberry Pi device,
    instructions [here](https://github.com/pakohan/craftdoor.git).
 1. Download `golang` from https://golang.org. Follow installation instructions
    [here](https://golang.org/doc/install#install). Verify that go is installed
-   by running `go version` in a terminal.
+   by running `go version` in a terminal. Expect to see >= 1.14.
+1. Install GCC cross-compiler,
+  ```
+  $ sudo apt install gcc-arm-linux-gnueabi libc6-armel-cross \
+    libc6-dev-armel-cross binutils-arm-linux-gnueabi
+  ```
 1. Run `cmd/master/main.go`. This will launch a webserver listening on port 8080.
   ```
   $ git clone https://github.com/pakohan/craftdoor.git
