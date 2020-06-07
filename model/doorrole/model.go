@@ -18,10 +18,10 @@ func New(db *sqlx.DB) *Model {
 
 // DoorRole represents a single row
 type DoorRole struct {
-	DoorID              int64 `json:"door_id" db:"door_id"`
-	RoleID              int64 `json:"role_id" db:"role_id"`
-	DaytimeBeginSeconds int64 `json:"daytime_begin_seconds" db:"daytime_begin_seconds"`
-	DaytimeEndSeconds   int64 `json:"daytime_end_seconds" db:"daytime_end_seconds"`
+	DoorID              int64  `json:"door_id" db:"door_id"`
+	RoleID              int64  `json:"role_id" db:"role_id"`
+	DaytimeBeginSeconds *int64 `json:"daytime_begin_seconds" db:"daytime_begin_seconds"`
+	DaytimeEndSeconds   *int64 `json:"daytime_end_seconds" db:"daytime_end_seconds"`
 }
 
 // Create creates a new entry in the table
