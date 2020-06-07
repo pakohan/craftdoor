@@ -80,16 +80,16 @@ SET "member_id" = ?
 WHERE "id" = ?`
 	accessAllowed = `
 SELECT COUNT(*) > 0
-FROM "key"
-JOIN "member_role"
-	ON ("key"."member_id" = "member_role"."member_id")
-JOIN "door_role"
-	ON ("member_role"."role_id" = "door_role"."role_id")
-JOIN "time_seconds"
+FROM key
+JOIN member_role
+	ON (key.member_id = member_role.member_id)
+JOIN door_role
+	ON (member_role.role_id = door_role.role_id)
+JOIN time_seconds
 	ON (TRUE)
-WHERE "key"."secret" = ?
-AND "door_role"."door_id" = ?
-AND ("member_role"."expires_at" > CURRENT_TIMESTAMP OR "member_role"."expires_at" IS NULL)
-AND ("door_role"."daytime_begin_seconds" < strftime('%s',CURRENT_TIMESTAMP) - strftime('%s', DATE(CURRENT_TIMESTAMP)) OR "door_role"."daytime_begin_seconds" IS NULL)
-AND (door_role.daytime_end_seconds > strftime('%s',CURRENT_TIMESTAMP) - strftime('%s', DATE(CURRENT_TIMESTAMP)) OR door_role"."daytime_end_seconds" IS NULL)`
+WHERE key.secret = ?
+AND door_role.door_id = ?
+AND (member_role.expires_at > CURRENT_TIMESTAMP OR member_role.expires_at IS NULL)
+AND (door_role.daytime_begin_seconds < strftime('%s',CURRENT_TIMESTAMP) - strftime('%s', DATE(CURRENT_TIMESTAMP)) OR door_role.daytime_begin_seconds IS NULL)
+AND (door_role.daytime_end_seconds > strftime('%s',CURRENT_TIMESTAMP) - strftime('%s', DATE(CURRENT_TIMESTAMP)) OR door_role.daytime_end_seconds IS NULL)`
 )

@@ -76,7 +76,7 @@ func (s *Service) door() {
 
 		res, err := s.m.KeyModel.IsAccessAllowed(context.Background(), state.CardData[0], 1)
 		if err != nil {
-			log.Printf("got err checking whether key is allowed to access: %s", err.Error)
+			log.Printf("got err checking whether key is allowed to access: %s", err.Error())
 		} else {
 			log.Printf("key %s is allowed to access door %d -> %t", state.CardData[0], 1, res)
 		}
