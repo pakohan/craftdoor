@@ -1,11 +1,8 @@
 package main
 
 import (
-	"context"
 	"log"
 	"net/http"
-	"os"
-	"os/signal"
 	"sync"
 
 	"github.com/jmoiron/sqlx"
@@ -35,21 +32,21 @@ func main() {
 	wg.Add(1)
 	defer wg.Wait()
 
-	c := make(chan os.Signal, 1)
-	signal.Notify(c)
-	go func() {
-		defer wg.Done()
-		<-c
-		log.Printf("shutting down DB")
-		e := db.Close()
-		if e != nil {
-			log.Printf("err closing db: %s", e.Error())
-		}
-	}()
+	// c := make(chan os.Signal, 1)
+	// signal.Notify(c)
+	// go func() {
+	// 	defer wg.Done()
+	// 	<-c
+	// 	log.Printf("shutting down DB")
+	// 	e := db.Close()
+	// 	if e != nil {
+	// 		log.Printf("err closing db: %s", e.Error())
+	// 	}
+	// }()
 
 	err = start(cfg, db, wg)
 	if err != nil {
-		c <- os.Interrupt
+		// c <- os.Interrupt
 		log.Panic(err)
 	}
 
@@ -80,18 +77,18 @@ func start(cfg config.Config, db *sqlx.DB, wg *sync.WaitGroup) error {
 		Handler: c,
 	}
 
-	wg.Add(1)
-	sig := make(chan os.Signal, 1)
-	signal.Notify(sig)
-	go func() {
-		defer wg.Done()
-		<-sig
-		log.Printf("shutting down HTTP server")
-		e := srv.Shutdown(context.Background())
-		if e != nil {
-			log.Printf("err closing HTTP server: %s", e.Error())
-		}
-	}()
+	// wg.Add(1)
+	// sig := make(chan os.Signal, 1)
+	// signal.Notify(sig)
+	// go func() {
+	// 	defer wg.Done()
+	// 	<-sig
+	// 	log.Printf("shutting down HTTP server")
+	// 	e := srv.Shutdown(context.Background())
+	// 	if e != nil {
+	// 		log.Printf("err closing HTTP server: %s", e.Error())
+	// 	}
+	// }()
 
 	log.Printf("listening on %s", cfg.ListenHTTP)
 	err := srv.ListenAndServe()
