@@ -39,6 +39,7 @@ func (s *Service) InitKey(ctx context.Context) error {
 	return s.r.InitKey([16]byte{1, 2, 3}, [16]byte{4, 5, 6}, mfrc522.DefaultKey, mfrc522.Key{1, 2, 3, 4, 5, 6}, mfrc522.Key{6, 5, 4, 3, 2, 1})
 }
 
+// RegisterKey inserts the key id of the next being presented to the reader into the table
 func (s *Service) RegisterKey(ctx context.Context) (key.Key, error) {
 	log.Printf("registering key")
 	state, err := s.cl.ReturnFirstKey(ctx)

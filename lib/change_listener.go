@@ -56,6 +56,7 @@ func (cl *ChangeListener) WaitForChange(ctx context.Context, id uuid.UUID) (Stat
 	}
 }
 
+// ReturnFirstKey returns as soon as a key is put in front of the reader
 func (cl *ChangeListener) ReturnFirstKey(ctx context.Context) (State, error) {
 	cl.lock.Lock()
 	if cl.currentState.IsCardAvailable {

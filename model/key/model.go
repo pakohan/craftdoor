@@ -51,6 +51,7 @@ func (m *Model) IsAccessAllowed(ctx context.Context, keyID string, doorID int64)
 	return res, err
 }
 
+// AssignMember updates the member_id of a key in the table
 func (m *Model) AssignMember(ctx context.Context, keyID, memberID int64) error {
 	mID := &memberID
 	if memberID == 0 {
