@@ -119,7 +119,7 @@ func (r *reader) read(timeout time.Duration) ([3]string, error) {
 	r.rlock.Lock()
 	defer r.rlock.Unlock()
 
-	b0, err := r.rfid.ReadCard(timeout, commands.PICC_AUTHENT1B, 0, 0, mfrc522.DefaultKey)
+	b0, err := r.rfid.ReadCard(timeout, commands.PICC_AUTHENT1B, 0, 0, mfrc522.Key{6, 5, 4, 3, 2, 1})
 	if err != nil {
 		switch {
 		case err.Error() == "mfrc522 lowlevel: IRQ error": // card needs to be reinitialized, see https://github.com/google/periph/issues/425
@@ -131,12 +131,12 @@ func (r *reader) read(timeout time.Duration) ([3]string, error) {
 		}
 	}
 
-	b1, err := r.rfid.ReadCard(timeout, commands.PICC_AUTHENT1B, 0, 1, mfrc522.DefaultKey)
+	b1, err := r.rfid.ReadCard(timeout, commands.PICC_AUTHENT1B, 0, 1, mfrc522.Key{6, 5, 4, 3, 2, 1})
 	if err != nil {
 		return [3]string{}, err
 	}
 
-	b2, err := r.rfid.ReadCard(timeout, commands.PICC_AUTHENT1B, 0, 2, mfrc522.DefaultKey)
+	b2, err := r.rfid.ReadCard(timeout, commands.PICC_AUTHENT1B, 0, 2, mfrc522.Key{6, 5, 4, 3, 2, 1})
 	if err != nil {
 		return [3]string{}, err
 	}

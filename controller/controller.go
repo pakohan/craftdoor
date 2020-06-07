@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/pakohan/craftdoor/controller/doors"
+	"github.com/pakohan/craftdoor/controller/keys"
 	"github.com/pakohan/craftdoor/controller/members"
 	"github.com/pakohan/craftdoor/controller/roles"
 	"github.com/pakohan/craftdoor/model"
@@ -60,6 +61,7 @@ func New(m model.Model, s *service.Service) http.Handler {
 	doors.New(r.PathPrefix("/doors").Subrouter(), m)
 	members.New(r.PathPrefix("/members").Subrouter(), m)
 	roles.New(r.PathPrefix("/roles").Subrouter(), m)
+	keys.New(r.PathPrefix("/keys").Subrouter(), m, s)
 	return c
 }
 

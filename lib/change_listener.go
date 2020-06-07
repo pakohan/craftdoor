@@ -56,6 +56,33 @@ func (cl *ChangeListener) WaitForChange(ctx context.Context, id uuid.UUID) (Stat
 	}
 }
 
+func (cl *ChangeListener) ReturnFirstKey(ctx context.Context) (State, error) {
+	cl.lock.Lock()
+	if cl.currentState.IsCardAvailable {
+		res := cl.currentState
+		cl.lock.Unlock()
+		return res, nil
+	}
+
+	reqID := uuid.New()
+	c := make(chan State)
+	cl.listeners[reqID] = c
+	cl.lock.Unlock()
+
+	defer func() {
+		cl.lock.Lock()
+		delete(cl.listeners, reqID)
+		cl.lock.Unlock()
+	}()
+
+	select {
+	case res := <-c:
+		return res, nil
+	case <-ctx.Done():
+		return State{}, ctx.Err()
+	}
+}
+
 // Notify changes the current state
 func (cl *ChangeListener) Notify(data [3]string) {
 	cl.lock.Lock()
