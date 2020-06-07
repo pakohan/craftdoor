@@ -49,7 +49,7 @@ func (m *Model) Create(ctx context.Context, k *Key) error {
 func (m *Model) IsAccessAllowed(ctx context.Context, keyID string, doorID int64) (bool, error) {
 	var res bool
 	err := m.db.GetContext(ctx, &res, accessAllowed, keyID, doorID)
-	log.Printf("is access allowed? keyID: %s, doorID: %d -> %t", keyID, doorID, res)
+	log.Printf("is access allowed? keyID: %s, doorID: %d -> %t, (%s)", keyID, doorID, res, err)
 	return res, err
 }
 
