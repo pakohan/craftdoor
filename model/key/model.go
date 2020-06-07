@@ -48,7 +48,7 @@ const (
 INSERT INTO "main"."key"
 ( secret,  access_key)
 VALUES
-(:secret, :access_key`
+(:secret, :access_key)`
 	accessAllowed = `
 WITH time_seconds (
 	SELECT strftime('%s',CURRENT_TIMESTAMP) - strftime('%s', DATE(CURRENT_TIMESTAMP)) as sec
