@@ -22,6 +22,7 @@ func New(r *mux.Router, m model.Model) {
 	}
 
 	r.Methods(http.MethodPost).HandlerFunc(c.create)
+	r.Methods(http.MethodGet).Path("/{id}/roles").HandlerFunc(c.getRoles)
 	r.Methods(http.MethodGet).HandlerFunc(c.list)
 	r.Methods(http.MethodPut).Path("/{id}").HandlerFunc(c.update)
 	r.Methods(http.MethodDelete).Path("/{id}").HandlerFunc(c.delete)
@@ -92,5 +93,24 @@ func (c *controller) delete(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
+	}
+}
+
+func (c *controller) getRoles(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.ParseUint(mux.Vars(r)["id"], 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	res, err := c.m.DoorroleModel.List(r.Context(), id, 0)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(res)
+	if err != nil {
+		log.Printf("err encoding response: %s", err.Error())
 	}
 }

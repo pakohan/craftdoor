@@ -31,9 +31,9 @@ func (m *Model) Create(ctx context.Context, t *DoorRole) error {
 }
 
 // List returns all entries from the table
-func (m *Model) List(ctx context.Context) ([]DoorRole, error) {
+func (m *Model) List(ctx context.Context, doorID, roleID int64) ([]DoorRole, error) {
 	res := []DoorRole{}
-	err := m.db.SelectContext(ctx, &res, queryList)
+	err := m.db.SelectContext(ctx, &res, queryList, doorID, doorID, roleID, roleID)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,9 @@ SELECT "door_id"
 	, "role_id"
 	, "daytime_begin_seconds"
 	, "daytime_end_seconds"
-FROM "door_role"`
+FROM "door_role"
+WHERE (? = 0 OR "door_id" = ?)
+AND (? = 0 OR "role_id" = ?)`
 	queryUpdate = `
 UPDATE "door_role"
 SET "daytime_begin_seconds" = :daytime_begin_seconds

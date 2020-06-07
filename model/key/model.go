@@ -47,9 +47,9 @@ func (m *Model) Create(ctx context.Context, k *Key) error {
 
 // IsAccessAllowed returns whether the key has access to that door at the current time
 func (m *Model) IsAccessAllowed(ctx context.Context, keyID string, doorID int64) (bool, error) {
-	log.Printf("is access allowed? keyID: %s, doorID: %d", keyID, doorID)
 	var res bool
 	err := m.db.GetContext(ctx, &res, accessAllowed, keyID, doorID)
+	log.Printf("is access allowed? keyID: %s, doorID: %d -> %t", keyID, doorID, res)
 	return res, err
 }
 
