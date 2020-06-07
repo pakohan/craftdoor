@@ -97,7 +97,7 @@ func (c *controller) delete(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *controller) getRoles(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.ParseUint(mux.Vars(r)["id"], 10, 64)
+	id, err := strconv.ParseInt(mux.Vars(r)["id"], 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
